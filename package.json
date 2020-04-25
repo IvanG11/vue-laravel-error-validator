@@ -1,0 +1,32 @@
+{
+  "name": "vue-laravel-error-validator",
+  "version": "0.1.0",
+  "description": "A Vue.JS plugin that adds a global function which can be used to fill and display errors from a laravel error response",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ivang11/vue-laravel-error-validator.git"
+  },
+  "keywords": [
+    "Vue",
+    "laravel",
+    "validation",
+    "JS",
+    "js",
+    "Laravel",
+    "Errors",
+    "vue",
+    "vuejs",
+    "vue-mixin",
+    "mixin"
+  ],
+  "author": "Ivan Garcia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ivang11/vue-laravel-error-validator/issues"
+  },
+  "homepage": "https://github.com/ivang11/vue-laravel-error-validator"
+}
