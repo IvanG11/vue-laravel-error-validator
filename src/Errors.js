@@ -74,7 +74,7 @@ class Errors {
         Object.keys(errors)
             .filter(e => e === field || e.startsWith(`${field}.`) || e.startsWith(`${field}[`))
             .forEach(e => delete errors[e]);
-        this.fill(errors);
+        this.record(errors);
     }
 
     /**
