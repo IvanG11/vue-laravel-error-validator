@@ -1,7 +1,10 @@
+import { reactive } from 'vue';
+
 class Errors {
 
     constructor() {
-        this.errors = {};
+        // Hacemos que el objeto errors sea reactivo con Vue 3
+        this.errors = reactive({});
     }
 
     /**
@@ -22,6 +25,7 @@ class Errors {
         if(this.has(key)){
             return this.errors[key][0]
         }
+        return null; // Explícitamente devolver null para evitar valores undefined en Vue 3
     }
 
     /**
@@ -52,7 +56,10 @@ class Errors {
      * Flush error
      */
     flush() {
-        this.errors = {};
+        // En Vue 3, debemos mantener la referencia al objeto reactivo
+        Object.keys(this.errors).forEach(key => {
+            delete this.errors[key];
+        });
     }
 
     /**
@@ -60,7 +67,11 @@ class Errors {
      * @param errors
      */
     record(errors = {}) {
-        this.errors = errors;
+        this.flush();
+        // Añadir las nuevas propiedades al objeto reactivo
+        Object.entries(errors).forEach(([key, value]) => {
+            this.errors[key] = value;
+        });
     }
 
     /**
@@ -70,11 +81,10 @@ class Errors {
      */
     clear(field) {
         if (!field) return this.flush();
-        let errors = Object.assign({}, this.errors);
-        Object.keys(errors)
+        
+        Object.keys(this.errors)
             .filter(e => e === field || e.startsWith(`${field}.`) || e.startsWith(`${field}[`))
-            .forEach(e => delete errors[e]);
-        this.record(errors);
+            .forEach(e => delete this.errors[e]);
     }
 
     /**
@@ -90,4 +100,5 @@ class Errors {
 
 }
 
+// Exportar una única instancia reactiva para toda la aplicación
 export default new Errors()

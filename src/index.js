@@ -1,37 +1,39 @@
-import Errors from './Errors'
-import ErrorComponent from './ErrorComponent.vue'
+import Errors from "./Errors";
+import ErrorComponent from "./ErrorComponent.vue";
 
-class Validator{
+// Crear el plugin para Vue 3
+const LaravelErrorValidator = {
+  install(app, options) {
+    // Registrar el componente global
+    app.component("error", ErrorComponent);
 
-    install(Vue){
+    // Configurar el interceptor de Axios si está disponible
+    if (typeof axios !== "undefined") {
+      axios.interceptors.response.use(
+        (response) => {
+          return response;
+        },
+        (error) => {
+          if (error.response && error.response.status === 422) {
+            Errors.record(error.response.data.errors);
+          }
 
-        Vue.component('error', ErrorComponent);
-        
-        if (axios) {
-            axios.interceptors.response.use((response) => {
-                return response;
-            }, (error) => {
-                if (error.response.status === 422) {
-                    Errors.record(error.response.data.errors)
-                }
-
-                return Promise.reject(error);
-            });
+          return Promise.reject(error);
         }
-
-        Vue.mixin({
-            beforeCreate(){
-                this.$options.$errors = {};
-                Vue.util.defineReactive(this.$options, '$errors', Errors);
-                if(!this.$options.computed){
-                    this.$options.computed = {}
-                }
-                this.$options.computed["$errors"] = function() {
-                    return this.$options.$errors;
-                };
-            },
-        })
+      );
     }
+
+    // Proporcionar la instancia de errores a la aplicación
+    app.config.globalProperties.$errors = Errors;
+
+    // Exponer la instancia de errores para composition API
+    app.provide("errors", Errors);
+  },
+};
+
+// Exportar una función de conveniencia para usar con la Composition API
+export function useErrors() {
+  return Errors;
 }
 
-export default new Validator()
+export default LaravelErrorValidator;
